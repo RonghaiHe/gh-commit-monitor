@@ -14,15 +14,20 @@ A GitHub Action that monitors public repositories for new commits and sends a da
 
 ### 1. Fork or Clone This Repository
 
-### 2. Configure GitHub Secrets
+### 2. Configure GitHub Variables and Secrets
 
-Go to your repository → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
+Go to your repository → **Settings** → **Secrets and variables** → **Actions**
 
-Add the following secrets:
+**Add a Repository Variable** (for repo list - supports hyphens):
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `MONITORED_REPOS` | Comma-separated list of repos to monitor | `facebook/react,vuejs/vue,angular/angular` |
+
+**Add Repository Secrets** (for sensitive data):
 
 | Secret | Description | Example |
 |--------|-------------|---------|
-| `MONITORED_REPOS` | Comma-separated list of repos to monitor | `facebook/react,vuejs/vue,angular/angular` |
 | `SMTP_SERVER` | SMTP server address | `smtp.gmail.com` |
 | `SMTP_PORT` | SMTP port | `587` |
 | `SMTP_USERNAME` | Your email address | `you@gmail.com` |
@@ -110,6 +115,16 @@ Total: 4 commits across 2 repositories
 ```
 
 ## Troubleshooting
+
+### "MONITORED_REPOS environment variable is not set"
+
+Make sure you created a **Repository Variable** (not a Secret) named `MONITORED_REPOS`:
+- Go to **Settings → Secrets and variables → Actions → Variables tab**
+- Click **New repository variable**
+- Name: `MONITORED_REPOS`
+- Value: `facebook/react,vuejs/vue,angular/angular`
+
+**Note**: Variables support hyphens in values, Secrets do not.
 
 ### "No new commits found. Skipping email."
 
