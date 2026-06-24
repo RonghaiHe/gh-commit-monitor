@@ -124,9 +124,14 @@ Total: 4 commits across 2 repositories
 
 ### "MONITORED_REPOS not found"
 
-Make sure you have a `.env` file with the repository list:
-- Copy `.env.example` to `.env`
-- Edit `.env` and add your repositories:
+The script reads repository list from (in order of priority):
+1. Environment variable `MONITORED_REPOS` (GitHub Actions)
+2. `.env` file (local development)
+3. `.env.example` file (fallback)
+
+To fix this:
+- **GitHub Actions**: Set `MONITORED_REPOS` as a Secret or Variable
+- **Local**: Copy `.env.example` to `.env` and edit it:
   ```env
   MONITORED_REPOS=facebook/react,vuejs/vue,angular/angular
   ```

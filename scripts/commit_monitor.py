@@ -123,8 +123,10 @@ def send_email(subject: str, body: str) -> None:
 
 
 def main():
-    # Load from .env file first, then override with env vars
-    file_config = load_config_from_file()
+    # Load config: .env first, then .env.example as fallback
+    file_config = load_config_from_file(".env")
+    if not file_config:
+        file_config = load_config_from_file(".env.example")
 
     # Set env vars from file config if not already set
     for key, value in file_config.items():
@@ -134,7 +136,7 @@ def main():
     repos_str = os.environ.get("MONITORED_REPOS", "")
     if not repos_str:
         print("Error: MONITORED_REPOS not found")
-        print("Please set it in .env file or as environment variable.")
+        print("Please set it in .env, .env.example, or as environment variable.")
         return
 
     repos = [r.strip() for r in repos_str.split(",") if r.strip()]
