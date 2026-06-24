@@ -14,17 +14,21 @@ A GitHub Action that monitors public repositories for new commits and sends a da
 
 ### 1. Fork or Clone This Repository
 
-### 2. Configure GitHub Variables and Secrets
+### 2. Configure Repository List
 
-Go to your repository → **Settings** → **Secrets and variables** → **Actions**
+Edit `.env.example` and rename it to `.env` (for local testing):
 
-**Add a Repository Variable** (for repo list - supports hyphens):
+```env
+MONITORED_REPOS=facebook/react,vuejs/vue,angular/angular
+```
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `MONITORED_REPOS` | Comma-separated list of repos to monitor | `facebook/react,vuejs/vue,angular/angular` |
+**Note**: The script reads repositories from `.env` file. The `.env.example` file is a template that you can commit to your repo.
 
-**Add Repository Secrets** (for sensitive data):
+### 3. Configure GitHub Secrets
+
+Go to your repository → **Settings** → **Secrets and variables** → **Actions** → **Secrets tab**
+
+Add the following secrets:
 
 | Secret | Description | Example |
 |--------|-------------|---------|
@@ -34,7 +38,7 @@ Go to your repository → **Settings** → **Secrets and variables** → **Actio
 | `SMTP_PASSWORD` | App password (not your main password) | `abcd-efgh-ijkl-mnop` |
 | `EMAIL_RECIPIENT` | Where to send the report | `you@gmail.com` |
 
-### 3. Gmail Setup (if using Gmail)
+### 4. Gmail Setup (if using Gmail)
 
 1. Enable 2-Factor Authentication on your Google account
 2. Go to https://myaccount.google.com/apppasswords
@@ -110,21 +114,22 @@ Total: 4 commits across 2 repositories
 │       └── commit-monitor.yml    # GitHub Action workflow
 ├── scripts/
 │   └── commit_monitor.py         # Main monitoring script
+├── .env.example                  # Configuration template
+├── .gitignore                    # Ignore .env file
 ├── requirements.txt              # Python dependencies
 └── README.md                     # This file
 ```
 
 ## Troubleshooting
 
-### "MONITORED_REPOS environment variable is not set"
+### "MONITORED_REPOS not found"
 
-Make sure you created a **Repository Variable** (not a Secret) named `MONITORED_REPOS`:
-- Go to **Settings → Secrets and variables → Actions → Variables tab**
-- Click **New repository variable**
-- Name: `MONITORED_REPOS`
-- Value: `facebook/react,vuejs/vue,angular/angular`
-
-**Note**: Variables support hyphens in values, Secrets do not.
+Make sure you have a `.env` file with the repository list:
+- Copy `.env.example` to `.env`
+- Edit `.env` and add your repositories:
+  ```env
+  MONITORED_REPOS=facebook/react,vuejs/vue,angular/angular
+  ```
 
 ### "No new commits found. Skipping email."
 

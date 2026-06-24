@@ -12,6 +12,19 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta, timezone
 
 
+def load_config_from_file(filename: str = ".env") -> dict:
+    """Load configuration from .env file."""
+    config = {}
+    if os.path.exists(filename):
+        with open(filename, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    key, value = line.split("=", 1)
+                    config[key.strip()] = value.strip()
+    return config
+
+
 def get_commits_from_repo(repo: str, since: datetime) -> list:
     """Fetch commits from a repository since a given datetime."""
     url = f"https://api.github.com/repos/{repo}/commits"
@@ -110,10 +123,18 @@ def send_email(subject: str, body: str) -> None:
 
 
 def main():
+    # Load from .env file first, then override with env vars
+    file_config = load_config_from_file()
+
+    # Set env vars from file config if not already set
+    for key, value in file_config.items():
+        if key not in os.environ:
+            os.environ[key] = value
+
     repos_str = os.environ.get("MONITORED_REPOS", "")
     if not repos_str:
-        print("Error: MONITORED_REPOS environment variable is not set")
-        print("Please set it in your GitHub repository secrets.")
+        print("Error: MONITORED_REPOS not found")
+        print("Please set it in .env file or as environment variable.")
         return
 
     repos = [r.strip() for r in repos_str.split(",") if r.strip()]
