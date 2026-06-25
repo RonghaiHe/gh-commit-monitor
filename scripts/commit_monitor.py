@@ -111,15 +111,23 @@ def send_email(subject: str, body: str) -> None:
     msg["From"] = smtp_username
     msg["To"] = recipient
     msg["Subject"] = subject
-
     msg.attach(MIMEText(body, "plain"))
 
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(smtp_username, smtp_password)
-        server.sendmail(smtp_username, recipient, msg.as_string())
+    try:
+        if smtp_port == 465:
+            server = smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=30)
+        else:
+            server = smtplib.SMTP(smtp_server, smtp_port, timeout=30)
+            server.starttls()
 
-    print(f"Email sent successfully to {recipient}")
+        with server:
+            server.login(smtp_username, smtp_password)
+            server.sendmail(smtp_username, recipient, msg.as_string())
+
+        print(f"Email sent successfully to {recipient}")
+    except smtplib.SMTPException as e:
+        print(f"Failed to send email: {e}")
+        raise
 
 
 def main():
